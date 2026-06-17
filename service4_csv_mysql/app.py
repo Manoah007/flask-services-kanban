@@ -137,7 +137,47 @@ def upload_csv():
         201,
     )
 
+@app.route("/upload/series", methods=["GET"])
+def list_series():
+    """Retourne la liste des séries chargées et leur nombre de points."""
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
 
+        # Requête SQL nettoyée
+        query = (
+            "SELECT nom_serie, COUNT(*) AS n, MIN(date_mesure), MAX(date_mesure) "
+            "FROM donnees "
+            "GROUP BY nom_serie "
+            "ORDER BY nom_serie"
+        )
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        # Construction de la liste des séries
+        series = [
+            {
+                "serie": r[0],
+                "n_points": r[1],
+                "debut": str(r[2]) if r[2] is not None else None,
+                "fin": str(r[3]) if r[3] is not None else None,
+            }
+            for r in rows
+        ]
+
+        return jsonify({"series": series, "total": len(series)}), 200
+
+    except Exception as e:
+        return (
+            jsonify({"erreur": "Erreur base de données", "detail": str(e)}),
+            500,
+        )
+
+
+    
 if __name__ == "__main__":
     # Changement de port pour correspondre à votre configuration (5004)
     app.run(debug=True, port=5004)
