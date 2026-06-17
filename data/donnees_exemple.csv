@@ -1,4 +1,4 @@
-nom_serie,valeur,categorie,date_mesure 
+nom_serie,valeur,categorie,date_mesure
 serie_A,12.50,temperature,2024-01-15
 serie_A,15.30,temperature,2024-01-16
 serie_A,8.70,temperature,2024-01-17
