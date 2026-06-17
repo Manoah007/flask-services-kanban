@@ -181,14 +181,3 @@ def list_series():
 if __name__ == "__main__":
     # Changement de port pour correspondre à votre configuration (5004)
     app.run(debug=True, port=5004)
-
-# Charger le fichier CSV de démonstration curl -X POST http://localhost:5004/upload/csv \ -F 'file=@data/donnees_exemple.csv'
-# Réponse attendue :
-# {
-#   "statut": "success",
-#   "lignes_inserees": 22,
-#   "lignes_invalides_ignorees": 0,
-#   "message": "22 ligne(s) chargée(s) dans la table donnees"
-# }
-# Lister les séries disponibles curl http://localhost:5004/upload/series
-
