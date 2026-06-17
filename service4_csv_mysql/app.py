@@ -27,7 +27,12 @@ def get_connection():
 
 @app.route("/upload/csv", methods=["POST"])
 def upload_csv():
-    # 1. Vérifier la présence et la validité du fichier
+    """ 
+    Cette fonction permet de recevoir un fichier CSV, de le faire passer
+    par plusieurs critères de validations, puis de l'insérer dans la base de données MySQL.
+    """
+
+    #Vérifier la présence du fichier dans la requête
     if "file" not in request.files:
         return (
             jsonify({"erreur": 'Aucun fichier envoyé (clé "file" manquante)'}),
@@ -36,23 +41,26 @@ def upload_csv():
 
     file = request.files["file"]
 
+    # Vérifier le nom de fichier et l'extension
     if file.filename == "":
         return jsonify({"erreur": "Nom de fichier vide"}), 400
 
+    # Vérifier l'extension du fichier
     if not file.filename.endswith(".csv"):
         return jsonify({"erreur": "Seuls les fichiers .csv sont acceptés"}), 400
 
-    # 2. Lire et valider le contenu CSV
+    # Lire et valider le contenu CSV
     try:
         content = file.read()
         if len(content) > TAILLE_MAX_OCTETS:
             return jsonify({"erreur": "Fichier trop volumineux (max 5 Mo)"}), 413
 
-        df = pd.read_csv(io.BytesIO(content))
+        df = pd.read_csv(io.BytesIO(content)) #Création d'un DataFrame à partir du contenu CSV
+
     except Exception as e:
         return jsonify({"erreur": f"Lecture CSV impossible : {e}"}), 400
 
-    # 3. Vérifier les colonnes obligatoires
+    # Vérifier les colonnes obligatoires
     colonnes_manquantes = COLONNES_REQUISES - set(df.columns)
     if colonnes_manquantes:
         return (
@@ -65,7 +73,7 @@ def upload_csv():
             400,
         )
 
-    # 4. Nettoyer et filtrer les données
+    # Nettoyer et filtrer les données
     df = df[[c for c in df.columns if c in COLONNES_VALIDES]].copy()
 
     # Conversion de la colonne 'valeur' en numérique et gestion des erreurs
@@ -76,7 +84,7 @@ def upload_csv():
     if df.empty:
         return jsonify({"erreur": "Aucune ligne valide dans le CSV"}), 400
 
-    # 5. Insérer les données nettoyées dans MySQL
+    # Insérer les données nettoyées dans MySQL
     try:
         conn = get_connection()
         cursor = conn.cursor()
@@ -116,7 +124,7 @@ def upload_csv():
             500,
         )
 
-    # 6. Réponse en cas de succès
+    # Réponse en cas de succès
     return (
         jsonify(
             {
@@ -133,3 +141,14 @@ def upload_csv():
 if __name__ == "__main__":
     # Changement de port pour correspondre à votre configuration (5004)
     app.run(debug=True, port=5004)
+
+# Charger le fichier CSV de démonstration curl -X POST http://localhost:5004/upload/csv \ -F 'file=@data/donnees_exemple.csv'
+# Réponse attendue :
+# {
+#   "statut": "success",
+#   "lignes_inserees": 22,
+#   "lignes_invalides_ignorees": 0,
+#   "message": "22 ligne(s) chargée(s) dans la table donnees"
+# }
+# Lister les séries disponibles curl http://localhost:5004/upload/series
+

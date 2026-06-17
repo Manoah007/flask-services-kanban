@@ -1,0 +1,5 @@
+# Dossier d'environnement virtuel (Ignorer)
+venv/
+
+# Fichiers de configuration secrets (Sécurité)
+.env
