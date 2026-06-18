@@ -164,3 +164,56 @@ Après avoir activé l'environnement virtuel (venv) et correctement configuré e
 ```PowerShell
     curl.exe http://localhost:5004/upload/series*
 ```
+
+## V - Tests Unitaires
+Le projet intègre une suite de tests unitaires automatisés avec **Pytest** afin de valider la robustesse des routes de l'API (gestion des erreurs, validité des fichiers, formats de réponse) sans avoir besoin de lancer des requêtes manuelles.
+
+### Prérequis
+Les tests nécessitent l'installation de `pytest`, déjà inclus dans le fichier `requirements.txt`. Si ce n'est pas déjà fait, installez-le dans votre environnement virtuel :
+
+```powershell
+    pip install pytest
+```
+
+### Structure des fichiers de test
+Les tests sont regroupés dans un dossier dédié à la racine du microservice
+
+```text
+service4_csv_mysql/
+├── test/
+│   └── test_route.py      # Contient l'ensemble des scénarios de test
+├── app.py                 # Code de l'application Flask
+└── requirements.txt
+```
+
+### Scénarios validés
+
+Le fichier ```test_route.py``` utilise un client de test Flask en mémoire (```app.test_client()```) pour vérifier automatiquement les cas suivants :
+
+1. ```test_upload_csv_missing_file_key``` : Vérifie que l'API renvoie une erreur ```400``` si le fichier est envoyé sans la clé ```"file"```.
+
+2. ```test_upload_csv_invalid_extension``` : Vérifie le rejet immédiat (erreur ```400```) d'un fichier qui n'est pas un ```.csv``` (ex: une image ```.png```).
+
+3. ```test_upload_csv_corrupted_or_empty_values``` : Valide le comportement du filtre Pandas. Si le CSV contient des données textuelles corrompues à la place de données numériques, le système l'exclut et renvoie une erreur ```400```.
+
+4. ```test_list_series_structure``` : S'assure que la route ```GET /upload/series``` répond un code ```200 OK``` et fournit une structure JSON contenant un tableau de séries et un compteur total
+
+### Exécution des tests
+Pour lancer la suite de tests unitaires et éviter les conflits de recherche de modules Python, placez-vous à la racine du dossier ```service4_csv_mysql``` avec votre environnement virtuel activé, puis exécutez la commande suivante
+
+```python
+    python -m pytest
+```
+
+### Résultat attendu
+Pytest va scanner le dossier et afficher un rapport d'exécution. Si tout est correct, vous verrez apparaître un bilan au vert
+
+```powershell
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-9.1.0
+collected 4 items
+
+test/test_route.py ....                                                  [100%]
+
+============================== 4 passed in 0.45s ==============================
+```

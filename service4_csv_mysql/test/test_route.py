@@ -1,6 +1,6 @@
 import io
 import pytest
-from app import app  # On importe ton application Flask
+from app import app  # On importe l'application Flask
 
 @pytest.fixture
 def client():
@@ -11,9 +11,7 @@ def client():
         yield client
 
 
-# ==============================================================================
-# TESTS POUR LA ROUTE : POST /upload/csv
-# ==============================================================================
+# Test unitaire route - upload/csv #
 
 def test_upload_csv_missing_file_key(client):
     """Vérifie le comportement si la clé 'file' est manquante dans la requête."""
@@ -37,7 +35,7 @@ def test_upload_csv_invalid_extension(client):
 
 def test_upload_csv_corrupted_or_empty_values(client):
     """Vérifie le cas où le CSV ne contient aucune ligne valide (valeurs textuelles)."""
-    # Un CSV valide en colonnes, mais avec du texte à la place des nombres
+    
     csv_invalide = "nom_serie,valeur,categorie,date_mesure\nserie_A,pas_un_nombre,test,2026-06-18"
     
     data = {
@@ -49,9 +47,7 @@ def test_upload_csv_corrupted_or_empty_values(client):
     assert "Aucune ligne valide dans le CSV" in response.json["erreur"]
 
 
-# ==============================================================================
-# TESTS POUR LA ROUTE : GET /upload/series
-# ==============================================================================
+# Test unitaire route - upload/series #
 
 def test_list_series_structure(client):
     """Vérifie que la route GET retourne une structure JSON conforme (200 OK)."""
