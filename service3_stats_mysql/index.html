@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Unitaire - Service 3</title>
+</head>
+<body>
+    <h1>Tests du Service 3 (MySQL)</h1>
+    
+    <h2>1. Description (serie_A)</h2>
+    <button onclick="testerDescribe()">Tester</button>
+    <pre id="res1" style="background:#eee; padding:10px;"></pre>
+
+    <h2>2. Corrélation (serie_A & serie_B)</h2>
+    <button onclick="testerCorrelation()">Tester</button>
+    <pre id="res2" style="background:#eee; padding:10px;"></pre>
+
+    <script>
+        async function testerDescribe() {
+            const res = await fetch('http://localhost:5003/db/stats/describe?serie=serie_A');
+            const data = await res.json();
+            document.getElementById('res1').textContent = JSON.stringify(data, null, 4);
+        }
+
+        async function testerCorrelation() {
+            const res = await fetch('http://localhost:5003/db/stats/correlation?serie_x=serie_A&serie_y=serie_B');
+            const data = await res.json();
+            document.getElementById('res2').textContent = JSON.stringify(data, null, 4);
+        }
+    </script>
+</body>
+</html>
