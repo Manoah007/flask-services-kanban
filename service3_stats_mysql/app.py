@@ -3,9 +3,7 @@ from flask import Flask, request, jsonify  # Flask pour créer l'API, request po
 import numpy as np                          # Numpy pour effectuer les calculs statistiques (moyenne, médiane, etc.)
 from scipy import stats                     # Scipy pour calculer le coefficient de corrélation de Pearson et la p-value
 from db import fetch_series                 # Importation de la fonction fetch_series depuis ton fichier db.py pour lire MySQL
-from flask_cors import CORS
-app = Flask(__name__)        # 2. Tu crées 'app' ICI
-CORS(app)
+
 
 # Initialisation de l'application Flask
 app = Flask(__name__)
