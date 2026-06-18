@@ -2,7 +2,6 @@ import mysql.connector
 from dotenv import load_dotenv
 import os
 
-# Charge les variables du fichier .env
 load_dotenv()
 
 def get_connection():
@@ -19,7 +18,6 @@ def fetch_series(nom_serie):
     """Récupère toutes les valeurs d'une série depuis la table donnees."""
     conn = get_connection()
     cursor = conn.cursor()
-    
     cursor.execute(
         'SELECT valeur FROM donnees WHERE nom_serie = %s ORDER BY date_mesure',
         (nom_serie,)
@@ -27,8 +25,8 @@ def fetch_series(nom_serie):
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
-    
+
     if not rows:
         raise ValueError(f"Aucune donnée trouvée pour la série '{nom_serie}'")
-        
+
     return [float(row[0]) for row in rows]
