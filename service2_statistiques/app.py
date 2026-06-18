@@ -36,6 +36,33 @@ def describe():
     except (ValueError, TypeError) as e:
         return jsonify({'erreur': str(e)}), 400
 
+
+# Route 2 — Corrélation de Pearson
+@app.route('/stats/correlation', methods=['POST'])
+def correlation():
+    data = request.get_json()
+    try:
+        # On valide la présence et le format des deux séries de données 'x' et 'y'
+        x_values = validate_data(data, key='x')
+        y_values = validate_data(data, key='y')
+        
+        if len(x_values) != len(y_values):
+            return jsonify({'erreur': 'Les listes x et y doivent avoir la même taille'}), 400
+            
+        # Calcul du coefficient de Pearson et de la p-value avec scipy
+        corr_coeff, p_value = stats.pearsonr(x_values, y_values)
+        
+        result = {
+            'coefficient': round(float(corr_coeff), 4),
+            'p_value': round(float(p_value), 4),
+            'interpretation': "Corrélation américaine significative" if p_value < 0.05 else "Corrélation non significative"
+        }
+        
+        return jsonify({'operation': 'correlation', 'resultat': result})
+        
+    except (ValueError, TypeError) as e:
+        return jsonify({'erreur': str(e)}), 400
+
 if __name__ == '__main__':
     # On utilise le port 5002 attribué au Service 2 
     app.run(debug=True, port=5002)
