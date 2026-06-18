@@ -2,31 +2,109 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Unitaire - Service 3</title>
+    <style>
+        /* Design moderne et centré */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            font-size: 18px;
+            margin-top: 30px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        pre {
+            background-color: #2b2b2b;
+            color: #a9b7c6;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            overflow-x: auto;
+            margin-top: 15px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+    </style>
 </head>
 <body>
-    <h1>Tests du Service 3 (MySQL)</h1>
-    
-    <h2>1. Description (serie_A)</h2>
-    <button onclick="testerDescribe()">Tester</button>
-    <pre id="res1" style="background:#eee; padding:10px;"></pre>
 
-    <h2>2. Corrélation (serie_A & serie_B)</h2>
-    <button onclick="testerCorrelation()">Tester</button>
-    <pre id="res2" style="background:#eee; padding:10px;"></pre>
+    <div class="container">
+        <h1>📊 Test Client - Service 3</h1>
+        <p>Interface de test pour l'API Flask (MySQL)</p>
+
+        <hr style="border: 1px solid #eee; margin: 20px 0;">
+
+        <div class="section">
+            <h2>1. Statistiques de la série A</h2>
+            <button onclick="testerDescribe()">Récupérer les statistiques</button>
+            <pre id="res1">En attente du test...</pre>
+        </div>
+
+        <div class="section">
+            <h2>2. Corrélation (Série A & Série B)</h2>
+            <button onclick="testerCorrelation()">Calculer la corrélation</button>
+            <pre id="res2">En attente du test...</pre>
+        </div>
+    </div>
 
     <script>
         async function testerDescribe() {
-            const res = await fetch('http://localhost:5003/db/stats/describe?serie=serie_A');
-            const data = await res.json();
-            document.getElementById('res1').textContent = JSON.stringify(data, null, 4);
+            const blocResultat = document.getElementById('res1');
+            blocResultat.textContent = "Chargement...";
+            try {
+                const res = await fetch('http://localhost:5003/db/stats/describe?serie=serie_A');
+                const data = await res.json();
+                blocResultat.textContent = JSON.stringify(data, null, 4);
+            } catch (error) {
+                blocResultat.textContent = "Erreur (CORS probable) : Impossible de lire les données.\n" + error;
+            }
         }
 
         async function testerCorrelation() {
-            const res = await fetch('http://localhost:5003/db/stats/correlation?serie_x=serie_A&serie_y=serie_B');
-            const data = await res.json();
-            document.getElementById('res2').textContent = JSON.stringify(data, null, 4);
+            const blocResultat = document.getElementById('res2');
+            blocResultat.textContent = "Chargement...";
+            try {
+                const res = await fetch('http://localhost:5003/db/stats/correlation?serie_x=serie_A&serie_y=serie_B');
+                const data = await res.json();
+                blocResultat.textContent = JSON.stringify(data, null, 4);
+            } catch (error) {
+                blocResultat.textContent = "Erreur (CORS probable) : Impossible de lire les données.\n" + error;
+            }
         }
     </script>
+
 </body>
 </html>
