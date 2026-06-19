@@ -38,7 +38,7 @@ def describe():
             'n': int(len(values)),                                        # Taille de l'échantillon
             'moyenne': round(float(np.mean(values)), 4),                  # Moyenne arithmétique arrondie à 4 décimales
             'mediane': round(float(np.median(values)), 4),                # Médiane (valeur centrale partageant la série en deux)
-            'ecart_type': round(float(np.std(values, ddof=1)), 4),        # Écart-type d'échantillon (dispersion autour de la moyenne, ddof=1 pour Bessel)
+            'ecart_type': round(float(np.std(values, ddof=1)), 4),        # Écart-type d'échantillon (dispersion autour de la moyenne, ddof=1 pour une division par N-1 afin de calculer la taille de l'echantillon)
             'variance': round(float(np.var(values, ddof=1)), 4),          # Variance d'échantillon (carré de l'écart-type, ddof=1 pour éviter le biais)
             'minimum': round(float(np.min(values)), 4),                    # Plus petite valeur de la série
             'maximum': round(float(np.max(values)), 4),                    # Plus grande valeur de la série
@@ -73,7 +73,7 @@ def correlation():
         # Calcul simultané du coefficient de Pearson (r) et de la p-value associée via scipy
         corr_coeff, p_value = stats.pearsonr(x_values, y_values)
         
-        # Interprétation de la p-value : significative si inférieure au seuil alpha universel de 5% (0.05)
+        # Interprétation de la p-value : significative si inférieure au seuil universel de 0.05
         result = {
             'coefficient': round(float(corr_coeff), 4),                   # Force et direction de la relation (-1 à 1)
             'p_value': round(float(p_value), 4),                          # Probabilité d'observer ce résultat sous l'hypothèse nulle
@@ -88,7 +88,7 @@ def correlation():
     
 
 # =========================================================================
-# Route 3 — Test de normalité (Vérification de la loi Gaussienne)
+# Route 3 — Test de normalité 
 # =========================================================================
 @app.route('/stats/test_normalite', methods=['POST'])
 def test_normalite():
